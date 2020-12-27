@@ -10,3 +10,6 @@
 [submodule "lib/Arduino-I2CScanner"]
 	path = lib/Arduino-I2CScanner
 	url = https://github.com/luisllamasbinaburo/Arduino-I2CScanner.git
+[submodule "lib/SparkFun_MPU-9250-DMP-ESP"]
+	path = lib/SparkFun_MPU-9250-DMP-ESP
+	url = https://github.com/dejanmeznarc/SparkFun_MPU-9250-DMP-EPS.git
