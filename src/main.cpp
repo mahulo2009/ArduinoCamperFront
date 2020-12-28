@@ -1,30 +1,30 @@
 #include <ESP8266WiFi.h>
-#include <SparkFunMPU9250-DMP-ESP.h>
 #include <Adafruit_BME280.h>
+#include "ADXL345.h"
 
 //D3  SDA GREEN
 //D2  SCL BLUE
-
 #define SDA_PIN             D3
 #define SCL_PIN             D2  
 
 #define BME_ID              0x76
-#define IMU_ID              0x68
 
 #define SEALEVELPRESSURE    (1013.25)
 
-float accX = 0;
-float accY = 0;
-float accZ = 0;
+#define ACCEL_SCALE 1 / 256 // LSB/g
+#define G_TO_ACCEL 9.81
+
 /**
  * BM3280 sensor: temperature, humidity, pressure and altitude
  */
 Adafruit_BME280       bme;
 
 /**
- * TODO
+ * Acceleromter sensor: acceleration x, y and z.
  */
-MPU9250_DMP imu;
+ADXL345 accelerometer;
+
+ADXL345 adxl = ADXL345();
 
 void setup() {
 
@@ -34,68 +34,62 @@ void setup() {
   //Wait for the Serial port to be ready
   while(!Serial) {}
 
-  delay(100);
-
   //Configure the I2C pins
   Wire.pins (SDA_PIN, SCL_PIN);
 
-  delay(100);
-
   //Start communication with the BME sensor
   bme.begin(BME_ID);
-  
-  delay(100);
 
-  if (imu.begin() != INV_SUCCESS)
+  //Initialize the accelerometer
+  accelerometer.initialize();
+  while( !  accelerometer.testConnection()  ) 
   {
-    while (1)
-    {
-      Serial.println("Unable to communicate with MPU-9250");
-      Serial.println("Check connections, and try again.");
+      Serial.println("Accelerometer NOT Connected!");
       Serial.println();
       delay(5000);
-    }
+
   }
 
-  delay(100);
-
-  imu.setSensors(INV_XYZ_ACCEL); 
-  imu.setAccelFSR(2); 
-
-  imu.dmpBegin(DMP_FEATURE_SEND_RAW_ACCEL ,
-              10);                  
 }
 
 void printBMEData() {
+
   Serial.println("Temperature:" +String(bme.readTemperature()));
   Serial.println("Humidity:"+String(bme.readHumidity()));
   Serial.println("Pressure:"+String(bme.readPressure()/ 100.0F));
   Serial.println("Altitude:"+String(bme.readAltitude(SEALEVELPRESSURE)));
+
   Serial.println();
+
 }
 
 void printIMUData() {
 
-  accX = imu.calcAccel(imu.ax);
-  accY = imu.calcAccel(imu.ay);
-  accZ = imu.calcAccel(imu.az);
+  int16_t ax, ay, az;
   
-  Serial.println("Acc: " + String(accX) + ", " +
-              String(accY) + ", " + String(accZ) + " ");
-  Serial.println("Time: " + String(imu.time) + " ms");
+  accelerometer.getAcceleration(&ax, &ay, &az);
+
+  float accX = ax * (double) ACCEL_SCALE * G_TO_ACCEL;
+  float accY = ay * (double) ACCEL_SCALE * G_TO_ACCEL;
+  float accZ = az * (double) ACCEL_SCALE * G_TO_ACCEL;
+  
+  Serial.println("Acc: " + 
+                  String(accX) + ", " +
+                  String(accY) + ", " + 
+                  String(accZ) + " ");
+
   Serial.println();
+
 }
 
 void loop() {
-
-  if ( imu.fifoAvailable() )
-  {
-    if ( imu.dmpUpdateFifo() == INV_SUCCESS)
-    {
-      printIMUData();
-    }
-  }
   
-  delay(1000);
+  //Print IMU data.
+  printIMUData();
+
+  //Print BME data.
+  printBMEData();
+
+  delay(2500);
 
 }
