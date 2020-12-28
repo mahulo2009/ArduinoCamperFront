@@ -1,15 +1,9 @@
-[submodule "lib/Adafruit_BME280_Library"]
-	path = lib/Adafruit_BME280_Library
-	url = https://github.com/adafruit/Adafruit_BME280_Library.git
 [submodule "lib/Adafruit_Sensor"]
 	path = lib/Adafruit_Sensor
 	url = https://github.com/adafruit/Adafruit_Sensor.git
-[submodule "lib/LiquidCrystal_I2C"]
-	path = lib/LiquidCrystal_I2C
-	url = https://github.com/johnrickman/LiquidCrystal_I2C.git
-[submodule "lib/Arduino-I2CScanner"]
-	path = lib/Arduino-I2CScanner
-	url = https://github.com/luisllamasbinaburo/Arduino-I2CScanner.git
+[submodule "lib/Adafruit_BME280_Library"]
+	path = lib/Adafruit_BME280_Library
+	url = https://github.com/adafruit/Adafruit_BME280_Library.git
 [submodule "lib/SparkFun_MPU-9250-DMP-ESP"]
 	path = lib/SparkFun_MPU-9250-DMP-ESP
 	url = https://github.com/dejanmeznarc/SparkFun_MPU-9250-DMP-EPS.git
